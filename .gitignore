@@ -36,3 +36,6 @@ terraform.rc
 
 # Workspace directory
 .vscode/*
+
+# Keys
+*.json
