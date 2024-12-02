@@ -8,44 +8,26 @@ variable "install_istio" {
 variable "istio" {
   description = "Map for overriding Istio Helm chart settings"
   type = object({
-    name       = optional(string)
-    repository = optional(string)
-    chart      = optional(string)
-    version    = optional(string)
-    namespace  = optional(string)
+    name       = optional(string, "istio")
+    repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/istio")
+    chart      = optional(string, "istio")
+    version    = optional(string, "1.21.2-1")
+    namespace  = optional(string, "istio-system")
 
-    addons_enabled = optional(bool)
+    addons_enabled = optional(bool, false)
   })
   default = {}
-}
-
-# locals
-locals {
-  default_istio = {
-    name              = "istio"
-    repository        = "oci://cr.yandex/yc-marketplace/yandex-cloud/istio"
-    chart             = "istio"
-    version           = "1.21.2-1"
-    namespace         = "istio-system"
-
-    addons_enabled    = false
-  }
-
-  istio = merge(
-    local.default_istio,
-    { for k, v in var.istio : k => v if v != null }
-  )
 }
 
 # helm
 resource "helm_release" "istio" {
   count       = var.install_istio ? 1 : 0
 
-  name        = local.istio.name
-  repository  = local.istio.repository
-  chart       = local.istio.chart
-  version     = local.istio.version
-  namespace   = local.istio.namespace
+  name        = var.istio.name
+  repository  = var.istio.repository
+  chart       = var.istio.chart
+  version     = var.istio.version
+  namespace   = var.istio.namespace
 
   create_namespace = true
 
@@ -53,7 +35,7 @@ resource "helm_release" "istio" {
     yamlencode(
       {
         addons = {
-          enabled = local.istio.addons_enabled
+          enabled = var.istio.addons_enabled
         }
       }
     )

@@ -8,48 +8,28 @@ variable "install_loki" {
 variable "loki" {
   description = "Map for overriding Loki Helm chart settings"
   type = object({
-    name       = optional(string)
-    repository = optional(string)
-    chart      = optional(string)
-    version    = optional(string)
-    namespace  = optional(string)
+    name       = optional(string, "loki")
+    repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/grafana/loki/chart")
+    chart      = optional(string, "loki")
+    version    = optional(string, "1.2.0-7")
+    namespace  = optional(string, "loki")
 
     object_storage_bucket   = optional(string)
     aws_key_value           = optional(string)
-    promtail_enabled        = optional(bool)
+    promtail_enabled        = optional(bool, true)
   })
   default = {}
-}
-
-# locals
-locals {
-  default_loki = {
-    name              = "loki"
-    repository        = "oci://cr.yandex/yc-marketplace/yandex-cloud/grafana/loki/chart"
-    chart             = "loki"
-    version           = "1.2.0-7"
-    namespace         = "loki"
-    
-    object_storage_bucket   = null
-    aws_key_value           = null
-    promtail_enabled        = true
-  }
-
-  loki = merge(
-    local.default_loki,
-    { for k, v in var.loki : k => v if v != null }
-  )
 }
 
 # helm
 resource "helm_release" "loki" {
   count       = var.install_loki ? 1 : 0
 
-  name        = local.loki.name
-  repository  = local.loki.repository
-  chart       = local.loki.chart
-  version     = local.loki.version
-  namespace   = local.loki.namespace
+  name        = var.loki.name
+  repository  = var.loki.repository
+  chart       = var.loki.chart
+  version     = var.loki.version
+  namespace   = var.loki.namespace
 
   create_namespace = true
 
@@ -57,11 +37,11 @@ resource "helm_release" "loki" {
     yamlencode(
       {
         global = {
-            bucketname = tostring(local.loki.object_storage_bucket)
-            serviceaccountawskeyvalue = tostring(local.loki.aws_key_value)
+            bucketname = tostring(var.loki.object_storage_bucket)
+            serviceaccountawskeyvalue = tostring(var.loki.aws_key_value)
         }
         promtail = {
-            enabled = local.loki.promtail_enabled
+            enabled = var.loki.promtail_enabled
         }
       }
     ) 

@@ -8,50 +8,29 @@ variable "install_cert_manager" {
 variable "cert_manager" {
   description = "Map for overriding cert-manager Helm chart settings"
   type = object({
-    name       = optional(string)
-    repository = optional(string)
-    chart      = optional(string)
-    version    = optional(string)
-    namespace  = optional(string)
+    name       = optional(string, "cert-manager")
+    repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/cert-manager-webhook-yandex")
+    chart      = optional(string, "cert-manager-webhook-yandex")
+    version    = optional(string, "1.0.8-1")
+    namespace  = optional(string, "cert-manager")
 
     service_account_key     = optional(string)
     folder_id               = optional(string)
     email_address           = optional(string)
-    letsencrypt_server      = optional(string)
+    letsencrypt_server      = optional(string, "https://acme-staging-v02.api.letsencrypt.org/directory")
   })
   default = {}
-}
-
-# locals
-locals {
-  default_cert_manager = {
-    name              = "cert-manager"
-    repository        = "oci://cr.yandex/yc-marketplace/yandex-cloud/cert-manager-webhook-yandex"
-    chart             = "cert-manager-webhook-yandex"
-    version           = "1.0.8-1"
-    namespace         = "cert-manager"
-    
-    service_account_key     = null
-    folder_id               = null
-    email_address           = null
-    letsencrypt_server      = "https://acme-staging-v02.api.letsencrypt.org/directory"
-  }
-
-  cert_manager = merge(
-    local.default_cert_manager,
-    { for k, v in var.cert_manager : k => v if v != null }
-  )
 }
 
 # helm
 resource "helm_release" "cert_manager" {
   count       = var.install_cert_manager ? 1 : 0
 
-  name        = local.cert_manager.name
-  repository  = local.cert_manager.repository
-  chart       = local.cert_manager.chart
-  version     = local.cert_manager.version
-  namespace   = local.cert_manager.namespace
+  name        = var.cert_manager.name
+  repository  = var.cert_manager.repository
+  chart       = var.cert_manager.chart
+  version     = var.cert_manager.version
+  namespace   = var.cert_manager.namespace
 
   create_namespace = true
 
@@ -59,10 +38,10 @@ resource "helm_release" "cert_manager" {
     yamlencode(
       {
         config = {
-          folder_id = tostring(local.cert_manager.folder_id)
-          email = tostring(local.cert_manager.email_address)
+          folder_id = tostring(var.cert_manager.folder_id)
+          email = tostring(var.cert_manager.email_address)
           auth = {
-            json = tostring(local.cert_manager.service_account_key)
+            json = tostring(var.cert_manager.service_account_key)
           }
         }
       }

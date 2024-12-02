@@ -8,11 +8,11 @@ variable "install_vault" {
 variable "vault" {
   description = "Map for overriding Vault Helm chart settings"
   type = object({
-    name       = optional(string)
-    repository = optional(string)
-    chart      = optional(string)
-    version    = optional(string)
-    namespace  = optional(string)
+    name       = optional(string, "vault")
+    repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/vault/chart")
+    chart      = optional(string, "vault")
+    version    = optional(string, "0.28.1+yckms")
+    namespace  = optional(string, "vault")
 
     service_account_key     = optional(string)
     kms_key_id              = optional(string)
@@ -20,42 +20,23 @@ variable "vault" {
   default = {}
 }
 
-# locals
-locals {
-  default_vault = {
-    name              = "vault"
-    repository        = "oci://cr.yandex/yc-marketplace/yandex-cloud/vault/chart"
-    chart             = "vault"
-    version           = "0.28.1+yckms"
-    namespace         = "vault"
-    
-    service_account_key     = null
-    kms_key_id              = null
-  }
-
-  vault = merge(
-    local.default_vault,
-    { for k, v in var.vault : k => v if v != null }
-  )
-}
-
 # helm
 resource "helm_release" "vault" {
   count       = var.install_vault ? 1 : 0
 
-  name        = local.vault.name
-  repository  = local.vault.repository
-  chart       = local.vault.chart
-  version     = local.vault.version
-  namespace   = local.vault.namespace
+  name        = var.vault.name
+  repository  = var.vault.repository
+  chart       = var.vault.chart
+  version     = var.vault.version
+  namespace   = var.vault.namespace
 
   create_namespace = true
 
   values = [ 
     yamlencode(
       {
-        yandexKmsAuthJson = tostring(local.vault.service_account_key)
-        yandexKmsKeyId = tostring(local.vault.kms_key_id)
+        yandexKmsAuthJson = tostring(var.vault.service_account_key)
+        yandexKmsKeyId = tostring(var.vault.kms_key_id)
       }
     ) 
   ]

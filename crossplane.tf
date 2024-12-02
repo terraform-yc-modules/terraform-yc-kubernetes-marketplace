@@ -8,44 +8,26 @@ variable "install_crossplane" {
 variable "crossplane" {
   description = "Map for overriding Crossplane Helm chart settings"
   type = object({
-    name       = optional(string)
-    repository = optional(string)
-    chart      = optional(string)
-    version    = optional(string)
-    namespace  = optional(string)
+    name       = optional(string, "crossplane")
+    repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/crossplane")
+    chart      = optional(string, "crossplane")
+    version    = optional(string, "1.15.0")
+    namespace  = optional(string, "crossplane")
 
     service_account_key     = optional(string)
   })
   default = {}
 }
 
-# locals
-locals {
-  default_crossplane = {
-    name              = "crossplane"
-    repository        = "oci://cr.yandex/yc-marketplace/yandex-cloud/crossplane"
-    chart             = "crossplane"
-    version           = "1.15.0"
-    namespace         = "crossplane"
-
-    service_account_key       = null
-  }
-
-  crossplane = merge(
-    local.default_crossplane,
-    { for k, v in var.crossplane : k => v if v != null }
-  )
-}
-
 # helm
 resource "helm_release" "crossplane" {
   count       = var.install_crossplane ? 1 : 0
 
-  name        = local.crossplane.name
-  repository  = local.crossplane.repository
-  chart       = local.crossplane.chart
-  version     = local.crossplane.version
-  namespace   = local.crossplane.namespace
+  name        = var.crossplane.name
+  repository  = var.crossplane.repository
+  chart       = var.crossplane.chart
+  version     = var.crossplane.version
+  namespace   = var.crossplane.namespace
 
   create_namespace = true
 
@@ -53,7 +35,7 @@ resource "helm_release" "crossplane" {
     yamlencode(
       {
         providerJetYC = {
-          creds = tostring(local.crossplane.service_account_key)
+          creds = tostring(var.crossplane.service_account_key)
         }
       }
     ) 

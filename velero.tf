@@ -8,11 +8,11 @@ variable "install_velero" {
 variable "velero" {
   description = "Map for overriding Velero Helm chart settings"
   type = object({
-    name       = optional(string)
-    repository = optional(string)
-    chart      = optional(string)
-    version    = optional(string)
-    namespace  = optional(string)
+    name       = optional(string, "velero")
+    repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/velero")
+    chart      = optional(string, "velero")
+    version    = optional(string, "2.30.4-1")
+    namespace  = optional(string, "velero")
 
     object_storage_bucket   = optional(string)
     aws_key_value           = optional(string)
@@ -20,44 +20,25 @@ variable "velero" {
   default = {}
 }
 
-# locals
-locals {
-  devault_velero = {
-    name              = "velero"
-    repository        = "oci://cr.yandex/yc-marketplace/yandex-cloud/velero"
-    chart             = "velero"
-    version           = "2.30.4-1"
-    namespace         = "velero"
-    
-    object_storage_bucket   = null
-    aws_key_value           = null
-  }
-
-  velero = merge(
-    local.devault_velero,
-    { for k, v in var.velero : k => v if v != null }
-  )
-}
-
 # helm
 resource "helm_release" "velero" {
   count       = var.install_velero ? 1 : 0
 
-  name        = local.velero.name
-  repository  = local.velero.repository
-  chart       = local.velero.chart
-  version     = local.velero.version
-  namespace   = local.velero.namespace
+  name        = var.velero.name
+  repository  = var.velero.repository
+  chart       = var.velero.chart
+  version     = var.velero.version
+  namespace   = var.velero.namespace
 
   create_namespace = true
 
   values = [ 
     yamlencode(
       {
-        serviceaccountawskeyvalue = tostring(local.velero.aws_key_value)
+        serviceaccountawskeyvalue = tostring(var.velero.aws_key_value)
         configuration = {
             backupStorageLocation = {
-                bucket = tostring(local.velero.object_storage_bucket)
+                bucket = tostring(var.velero.object_storage_bucket)
             }
         }
       }

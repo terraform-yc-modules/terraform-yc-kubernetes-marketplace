@@ -8,66 +8,43 @@ variable "install_gatekeeper" {
 variable "gatekeeper" {
   description = "Map for overriding Gatekeeper Helm chart settings"
   type = object({
-    name       = optional(string)
-    repository = optional(string)
-    chart      = optional(string)
-    version    = optional(string)
-    namespace  = optional(string)
+    name       = optional(string, "gatekeeper")
+    repository = optional(string, "oci://cr.yandex/yc-marketplace")
+    chart      = optional(string, "gatekeeper")
+    version    = optional(string, "3.12.0")
+    namespace  = optional(string, "gatekeeper")
 
-    audit_interval              = optional(number)
-    violation_limit             = optional(number)
-    match_kind_enabled          = optional(bool)
-    emit_events_enabled         = optional(bool)
-    namespace_events_enabled    = optional(bool)
-    external_data_enabled       = optional(bool)
+    audit_interval              = optional(number, 60)
+    violation_limit             = optional(number, 20)
+    match_kind_enabled          = optional(bool, false)
+    emit_events_enabled         = optional(bool, false)
+    namespace_events_enabled    = optional(bool, false)
+    external_data_enabled       = optional(bool, false)
   })
   default = {}
-}
-
-# locals
-locals {
-  default_gatekeeper = {
-    name              = "gatekeeper"
-    repository        = "oci://cr.yandex/yc-marketplace"
-    chart             = "gatekeeper"
-    version           = "3.12.0"
-    namespace         = "gatekeeper"
-    
-    audit_interval              = 60
-    violation_limit             = 20
-    match_kind_enabled          = false
-    emit_events_enabled         = false
-    namespace_events_enabled    = false
-    external_data_enabled       = false
-  }
-
-  gatekeeper = merge(
-    local.default_gatekeeper,
-    { for k, v in var.gatekeeper : k => v if v != null }
-  )
 }
 
 # helm
 resource "helm_release" "gatekeeper" {
   count       = var.install_gatekeeper ? 1 : 0
 
-  name        = local.gatekeeper.name
-  repository  = local.gatekeeper.repository
-  chart       = local.gatekeeper.chart
-  version     = local.gatekeeper.version
-  namespace   = local.gatekeeper.namespace
+  name        = var.gatekeeper.name
+  repository  = var.gatekeeper.repository
+  chart       = var.gatekeeper.chart
+  version     = var.gatekeeper.version
+  namespace   = var.gatekeeper.namespace
 
   create_namespace = true
 
   values = [ 
     yamlencode(
       {
-        auditInterval = tonumber(local.gatekeeper.audit_interval)
-        constraintViolationsLimit = tonumber(local.gatekeeper.violation_limit)
-        auditMatchKindOnly = local.gatekeeper.match_kind_enabled
-        emitAuditEvents = local.gatekeeper.emit_events_enabled
-        auditEventsInvolvedNamespace = local.gatekeeper.namespace_events_enabled
-        enableExternalData = local.gatekeeper.external_data_enabled
+        auditInterval = tonumber(var.gatekeeper.audit_interval)
+        constraintViolationsLimit = tonumber(var.gatekeeper.violation_limit)
+        auditMatchKindOnly = var.gatekeeper.match_kind_enabled
+        emitAuditEvents = var.gatekeeper.emit_events_enabled
+        auditEventsInvolvedNamespace = var.gatekeeper.namespace_events_enabled
+        enableExternalData = var.gatekeeper.external_data_enabled
       }
     ) 
   ]
