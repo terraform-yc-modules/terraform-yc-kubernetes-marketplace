@@ -22,22 +22,22 @@ variable "prometheus" {
 
 # helm
 resource "helm_release" "prometheus" {
-  count       = var.install_prometheus ? 1 : 0
+  count = var.install_prometheus ? 1 : 0
 
-  name        = var.prometheus.name
-  repository  = var.prometheus.repository
-  chart       = var.prometheus.chart
-  version     = var.prometheus.version
-  namespace   = var.prometheus.namespace
+  name       = var.prometheus.name
+  repository = var.prometheus.repository
+  chart      = var.prometheus.chart
+  version    = var.prometheus.version
+  namespace  = var.prometheus.namespace
 
   create_namespace = true
 
-  values = [ 
+  values = [
     yamlencode(
       {
         prometheusWorkspaceId = tostring(var.prometheus.prometheus_workspace_id)
-        iam_api_key_value = tostring(var.prometheus.api_key_value)
+        iam_api_key_value     = tostring(var.prometheus.api_key_value)
       }
-    ) 
+    )
   ]
 }

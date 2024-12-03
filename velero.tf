@@ -14,34 +14,34 @@ variable "velero" {
     version    = optional(string, "2.30.4-1")
     namespace  = optional(string, "velero")
 
-    object_storage_bucket   = optional(string)
-    aws_key_value           = optional(string)
+    object_storage_bucket = optional(string)
+    aws_key_value         = optional(string)
   })
   default = {}
 }
 
 # helm
 resource "helm_release" "velero" {
-  count       = var.install_velero ? 1 : 0
+  count = var.install_velero ? 1 : 0
 
-  name        = var.velero.name
-  repository  = var.velero.repository
-  chart       = var.velero.chart
-  version     = var.velero.version
-  namespace   = var.velero.namespace
+  name       = var.velero.name
+  repository = var.velero.repository
+  chart      = var.velero.chart
+  version    = var.velero.version
+  namespace  = var.velero.namespace
 
   create_namespace = true
 
-  values = [ 
+  values = [
     yamlencode(
       {
         serviceaccountawskeyvalue = tostring(var.velero.aws_key_value)
         configuration = {
-            backupStorageLocation = {
-                bucket = tostring(var.velero.object_storage_bucket)
-            }
+          backupStorageLocation = {
+            bucket = tostring(var.velero.object_storage_bucket)
+          }
         }
       }
-    ) 
+    )
   ]
 }

@@ -14,30 +14,30 @@ variable "crossplane" {
     version    = optional(string, "1.15.0")
     namespace  = optional(string, "crossplane")
 
-    service_account_key     = optional(string)
+    service_account_key = optional(string)
   })
   default = {}
 }
 
 # helm
 resource "helm_release" "crossplane" {
-  count       = var.install_crossplane ? 1 : 0
+  count = var.install_crossplane ? 1 : 0
 
-  name        = var.crossplane.name
-  repository  = var.crossplane.repository
-  chart       = var.crossplane.chart
-  version     = var.crossplane.version
-  namespace   = var.crossplane.namespace
+  name       = var.crossplane.name
+  repository = var.crossplane.repository
+  chart      = var.crossplane.chart
+  version    = var.crossplane.version
+  namespace  = var.crossplane.namespace
 
   create_namespace = true
 
-  values = [ 
+  values = [
     yamlencode(
       {
         providerJetYC = {
           creds = tostring(var.crossplane.service_account_key)
         }
       }
-    ) 
+    )
   ]
 }

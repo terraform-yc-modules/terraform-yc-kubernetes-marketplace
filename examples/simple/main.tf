@@ -1,7 +1,7 @@
 module "helm_addons" {
   source = "../../"
 
-  cluster_id                = var.cluster_id
+  cluster_id = var.cluster_id
 
-  install_nodelocal_dns     = true
+  install_nodelocal_dns = true
 }

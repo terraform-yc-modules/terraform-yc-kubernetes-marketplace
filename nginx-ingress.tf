@@ -14,36 +14,36 @@ variable "ingress_nginx" {
     version    = optional(string, "4.10.0")
     namespace  = optional(string, "ingress-nginx")
 
-    replica_count                       = optional(number, 1)
-    service_loadbalancer_ip             = optional(string)
-    service_external_traffic_policy     = optional(string, "Cluster") # Cluster or Local
+    replica_count                   = optional(number, 1)
+    service_loadbalancer_ip         = optional(string)
+    service_external_traffic_policy = optional(string, "Cluster") # Cluster or Local
   })
   default = {}
 }
 
 # helm
 resource "helm_release" "ingress_nginx" {
-  count       = var.install_ingress_nginx ? 1 : 0
+  count = var.install_ingress_nginx ? 1 : 0
 
-  name        = var.ingress_nginx.name
-  repository  = var.ingress_nginx.repository
-  chart       = var.ingress_nginx.chart
-  version     = var.ingress_nginx.version
-  namespace   = var.ingress_nginx.namespace
+  name       = var.ingress_nginx.name
+  repository = var.ingress_nginx.repository
+  chart      = var.ingress_nginx.chart
+  version    = var.ingress_nginx.version
+  namespace  = var.ingress_nginx.namespace
 
   create_namespace = true
 
-  values = [ 
+  values = [
     yamlencode(
       {
         controller = {
-            replicaCount = tonumber(var.ingress_nginx.replica_count)
-            service = {
-                loadBalancerIP = tostring(var.ingress_nginx.service_loadbalancer_ip)
-                externalTrafficPolicy = tostring(var.ingress_nginx.service_external_traffic_policy)
-            }
+          replicaCount = tonumber(var.ingress_nginx.replica_count)
+          service = {
+            loadBalancerIP        = tostring(var.ingress_nginx.service_loadbalancer_ip)
+            externalTrafficPolicy = tostring(var.ingress_nginx.service_external_traffic_policy)
+          }
         }
       }
-    ) 
+    )
   ]
 }

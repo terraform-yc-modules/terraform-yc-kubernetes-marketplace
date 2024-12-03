@@ -22,24 +22,24 @@ variable "gitlab_agent" {
 
 # helm
 resource "helm_release" "gitlab_agent" {
-  count       = var.install_gitlab_agent ? 1 : 0
+  count = var.install_gitlab_agent ? 1 : 0
 
-  name        = var.gitlab_agent.name
-  repository  = var.gitlab_agent.repository
-  chart       = var.gitlab_agent.chart
-  version     = var.gitlab_agent.version
-  namespace   = var.gitlab_agent.namespace
+  name       = var.gitlab_agent.name
+  repository = var.gitlab_agent.repository
+  chart      = var.gitlab_agent.chart
+  version    = var.gitlab_agent.version
+  namespace  = var.gitlab_agent.namespace
 
   create_namespace = true
 
-  values = [ 
+  values = [
     yamlencode(
       {
         gitlabDomain = tostring(var.gitlab_agent.gitlab_domain)
         config = {
-            token = tostring(var.gitlab_agent.gitlab_token)
+          token = tostring(var.gitlab_agent.gitlab_token)
         }
       }
-    ) 
+    )
   ]
 }

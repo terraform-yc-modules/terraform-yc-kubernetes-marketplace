@@ -19,13 +19,13 @@ variable "argocd" {
 
 # helm
 resource "helm_release" "argocd" {
-  count       = var.install_argocd ? 1 : 0
+  count = var.install_argocd ? 1 : 0
 
-  name        = var.argocd.name
-  repository  = var.argocd.repository
-  chart       = var.argocd.chart
-  version     = var.argocd.version
-  namespace   = var.argocd.namespace
+  name       = var.argocd.name
+  repository = var.argocd.repository
+  chart      = var.argocd.chart
+  version    = var.argocd.version
+  namespace  = var.argocd.namespace
 
   create_namespace = true
 }

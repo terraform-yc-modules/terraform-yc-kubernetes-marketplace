@@ -21,13 +21,13 @@ variable "istio" {
 
 # helm
 resource "helm_release" "istio" {
-  count       = var.install_istio ? 1 : 0
+  count = var.install_istio ? 1 : 0
 
-  name        = var.istio.name
-  repository  = var.istio.repository
-  chart       = var.istio.chart
-  version     = var.istio.version
-  namespace   = var.istio.namespace
+  name       = var.istio.name
+  repository = var.istio.repository
+  chart      = var.istio.chart
+  version    = var.istio.version
+  namespace  = var.istio.namespace
 
   create_namespace = true
 

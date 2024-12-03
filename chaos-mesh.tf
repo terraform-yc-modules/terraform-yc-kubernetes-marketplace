@@ -19,13 +19,13 @@ variable "chaos_mesh" {
 
 # helm
 resource "helm_release" "chaos_mesh" {
-  count       = var.install_chaos_mesh ? 1 : 0
+  count = var.install_chaos_mesh ? 1 : 0
 
-  name        = var.chaos_mesh.name
-  repository  = var.chaos_mesh.repository
-  chart       = var.chaos_mesh.chart
-  version     = var.chaos_mesh.version
-  namespace   = var.chaos_mesh.namespace
+  name       = var.chaos_mesh.name
+  repository = var.chaos_mesh.repository
+  chart      = var.chaos_mesh.chart
+  version    = var.chaos_mesh.version
+  namespace  = var.chaos_mesh.namespace
 
   create_namespace = true
 }

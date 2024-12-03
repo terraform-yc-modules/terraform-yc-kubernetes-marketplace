@@ -7,7 +7,7 @@ terraform {
       version = ">= 2.9"
     }
     yandex = {
-      source = "yandex-cloud/yandex"
+      source  = "yandex-cloud/yandex"
       version = ">= 0.108"
     }
   }
@@ -15,8 +15,8 @@ terraform {
 
 provider "helm" {
   kubernetes {
-    cluster_ca_certificate = data.yandex_kubernetes_cluster.target.master.0.cluster_ca_certificate
-    host                   = data.yandex_kubernetes_cluster.target.master.0.external_v4_endpoint
+    cluster_ca_certificate = data.yandex_kubernetes_cluster.target.master[0].cluster_ca_certificate
+    host                   = data.yandex_kubernetes_cluster.target.master[0].external_v4_endpoint
     token                  = data.yandex_client_config.client.iam_token
   }
 }

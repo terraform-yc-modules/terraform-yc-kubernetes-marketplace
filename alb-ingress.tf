@@ -14,34 +14,34 @@ variable "alb_ingress" {
     version    = optional(string, "v0.2.11")
     namespace  = optional(string, "alb-ingress")
 
-    folder_id               = optional(string, null)
-    cluster_id              = optional(string, null)
-    service_account_key     = optional(string, null)
-    healthchecks_enabled    = optional(bool, false)
+    folder_id            = optional(string, null)
+    cluster_id           = optional(string, null)
+    service_account_key  = optional(string, null)
+    healthchecks_enabled = optional(bool, false)
   })
   default = {}
 }
 
 # helm
 resource "helm_release" "alb_ingress" {
-  count       = var.install_alb_ingress ? 1 : 0
+  count = var.install_alb_ingress ? 1 : 0
 
-  name        = var.alb_ingress.name
-  repository  = var.alb_ingress.repository
-  chart       = var.alb_ingress.chart
-  version     = var.alb_ingress.version
-  namespace   = var.alb_ingress.namespace
+  name       = var.alb_ingress.name
+  repository = var.alb_ingress.repository
+  chart      = var.alb_ingress.chart
+  version    = var.alb_ingress.version
+  namespace  = var.alb_ingress.namespace
 
   create_namespace = true
 
-  values = [ 
+  values = [
     yamlencode(
       {
-        folderId = tostring(var.alb_ingress.folder_id)
-        clusterId = tostring(var.alb_ingress.cluster_id)
-        saKeySecretKey = tostring(var.alb_ingress.service_account_key)
+        folderId                  = tostring(var.alb_ingress.folder_id)
+        clusterId                 = tostring(var.alb_ingress.cluster_id)
+        saKeySecretKey            = tostring(var.alb_ingress.service_account_key)
         enableDefaultHealthChecks = var.alb_ingress.healthchecks_enabled
       }
-    ) 
+    )
   ]
 }

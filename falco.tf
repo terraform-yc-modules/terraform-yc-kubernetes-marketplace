@@ -22,24 +22,24 @@ variable "falco" {
 
 # helm
 resource "helm_release" "falco" {
-  count       = var.install_falco ? 1 : 0
+  count = var.install_falco ? 1 : 0
 
-  name        = var.falco.name
-  repository  = var.falco.repository
-  chart       = var.falco.chart
-  version     = var.falco.version
-  namespace   = var.falco.namespace
+  name       = var.falco.name
+  repository = var.falco.repository
+  chart      = var.falco.chart
+  version    = var.falco.version
+  namespace  = var.falco.namespace
 
   create_namespace = true
 
-  values = [ 
+  values = [
     yamlencode(
       {
         falcosidekick = {
-            enabled = var.falco.falco_sidekick_enabled
-            replicaCount = tonumber(var.falco.falco_sidekick_replicacount)
+          enabled      = var.falco.falco_sidekick_enabled
+          replicaCount = tonumber(var.falco.falco_sidekick_replicacount)
         }
       }
-    ) 
+    )
   ]
 }

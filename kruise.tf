@@ -19,13 +19,13 @@ variable "kruise" {
 
 # helm
 resource "helm_release" "kruise" {
-  count       = var.install_kruise ? 1 : 0
+  count = var.install_kruise ? 1 : 0
 
-  name        = var.kruise.name
-  repository  = var.kruise.repository
-  chart       = var.kruise.chart
-  version     = var.kruise.version
-  namespace   = var.kruise.namespace
+  name       = var.kruise.name
+  repository = var.kruise.repository
+  chart      = var.kruise.chart
+  version    = var.kruise.version
+  namespace  = var.kruise.namespace
 
   create_namespace = true
 }

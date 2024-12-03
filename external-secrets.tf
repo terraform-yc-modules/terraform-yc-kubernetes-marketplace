@@ -14,30 +14,30 @@ variable "external_secrets" {
     version    = optional(string, "0.9.20")
     namespace  = optional(string, "external-secrets")
 
-    service_account_key     = optional(string)
+    service_account_key = optional(string)
   })
   default = {}
 }
 
 # helm
 resource "helm_release" "external_secrets" {
-  count       = var.install_external_secrets ? 1 : 0
+  count = var.install_external_secrets ? 1 : 0
 
-  name        = var.external_secrets.name
-  repository  = var.external_secrets.repository
-  chart       = var.external_secrets.chart
-  version     = var.external_secrets.version
-  namespace   = var.external_secrets.namespace
+  name       = var.external_secrets.name
+  repository = var.external_secrets.repository
+  chart      = var.external_secrets.chart
+  version    = var.external_secrets.version
+  namespace  = var.external_secrets.namespace
 
   create_namespace = true
 
-  values = [ 
+  values = [
     yamlencode(
       {
         auth = {
           json = tostring(var.external_secrets.service_account_key)
         }
       }
-    ) 
+    )
   ]
 }

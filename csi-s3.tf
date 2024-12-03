@@ -31,37 +31,37 @@ variable "csi_s3" {
 
 # helm
 resource "helm_release" "csi_s3" {
-  count       = var.install_csi_s3 ? 1 : 0
+  count = var.install_csi_s3 ? 1 : 0
 
-  name        = var.csi_s3.name
-  repository  = var.csi_s3.repository
-  chart       = var.csi_s3.chart
-  version     = var.csi_s3.version
-  namespace   = var.csi_s3.namespace
+  name       = var.csi_s3.name
+  repository = var.csi_s3.repository
+  chart      = var.csi_s3.chart
+  version    = var.csi_s3.version
+  namespace  = var.csi_s3.namespace
 
   create_namespace = true
 
-  values = [ 
+  values = [
     yamlencode(
       {
         secret = {
           accessKey = tostring(var.csi_s3.object_storage_key_id)
           secretKey = tostring(var.csi_s3.object_storage_key_secret)
-          create = var.csi_s3.create_secret
-          endpoint = tostring(var.csi_s3.s3_endpoint)
-          name = tostring(var.csi_s3.secret_name)
+          create    = var.csi_s3.create_secret
+          endpoint  = tostring(var.csi_s3.s3_endpoint)
+          name      = tostring(var.csi_s3.secret_name)
         }
         storageClass = {
-          create = var.csi_s3.create_storage_class
-          mountOptions = tostring(var.csi_s3.mount_options)
-          name = tostring(var.csi_s3.storage_class_name)
+          create        = var.csi_s3.create_storage_class
+          mountOptions  = tostring(var.csi_s3.mount_options)
+          name          = tostring(var.csi_s3.storage_class_name)
           reclaimPolicy = tostring(var.csi_s3.reclaim_policy)
-          singleBucket = tostring(var.csi_s3.single_bucket)
+          singleBucket  = tostring(var.csi_s3.single_bucket)
         }
         tolerations = {
           all = var.csi_s3.tolerations_all
         }
       }
-    ) 
+    )
   ]
 }

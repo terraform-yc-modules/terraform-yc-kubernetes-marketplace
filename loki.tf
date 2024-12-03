@@ -14,36 +14,36 @@ variable "loki" {
     version    = optional(string, "1.2.0-7")
     namespace  = optional(string, "loki")
 
-    object_storage_bucket   = optional(string)
-    aws_key_value           = optional(string)
-    promtail_enabled        = optional(bool, true)
+    object_storage_bucket = optional(string)
+    aws_key_value         = optional(string)
+    promtail_enabled      = optional(bool, true)
   })
   default = {}
 }
 
 # helm
 resource "helm_release" "loki" {
-  count       = var.install_loki ? 1 : 0
+  count = var.install_loki ? 1 : 0
 
-  name        = var.loki.name
-  repository  = var.loki.repository
-  chart       = var.loki.chart
-  version     = var.loki.version
-  namespace   = var.loki.namespace
+  name       = var.loki.name
+  repository = var.loki.repository
+  chart      = var.loki.chart
+  version    = var.loki.version
+  namespace  = var.loki.namespace
 
   create_namespace = true
 
-  values = [ 
+  values = [
     yamlencode(
       {
         global = {
-            bucketname = tostring(var.loki.object_storage_bucket)
-            serviceaccountawskeyvalue = tostring(var.loki.aws_key_value)
+          bucketname                = tostring(var.loki.object_storage_bucket)
+          serviceaccountawskeyvalue = tostring(var.loki.aws_key_value)
         }
         promtail = {
-            enabled = var.loki.promtail_enabled
+          enabled = var.loki.promtail_enabled
         }
       }
-    ) 
+    )
   ]
 }
