@@ -17,6 +17,21 @@ module "helm_addons" {
 }
 ```
 
+### Important
+
+There might be a problem after deploying if the Kubernetes cluster being replaced. Helm Marketplace module will "block" the cluster change, if used in the same `terraform apply` cycle, as Helm provider won't be able to connect to the target Kubernetes cluster during refresh.
+In that case, applying the change in two steps will help:
+```bash
+# First updating the initial Kubernetes cluster and replacing it
+terraform apply -target=module.kube
+# Applying all the rest, including Marketplace module
+terraform apply
+```
+If the cluster changed in a separate (outside) module, but Marketplace won't apply because of outdated information, a simple refresh usually does the trick (after verifying that the `cluster_id` is valid):
+```
+terraform apply -refresh-only
+```
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
