@@ -11,13 +11,11 @@ variable "external_dns" {
     name       = optional(string, "external-dns")
     repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/externaldns/chart/")
     chart      = optional(string, "externaldns")
-    version    = optional(string, "0.5.1-a")
+    version    = optional(string, "0.5.1-b")
     namespace  = optional(string, "external-dns")
 
     service_account_key = optional(string)
     folder_id           = optional(string)
-    txt_owner_id        = optional(string, "external-dns")
-    txt_prefix          = optional(string, "external-dns-")
   })
   default = {}
 }
@@ -42,8 +40,6 @@ resource "helm_release" "external_dns" {
             json = tostring(var.external_dns.service_account_key)
           }
           folder_id    = tostring(var.external_dns.folder_id)
-          txt_owner_id = tostring(var.external_dns.txt_owner_id)
-          txt_prefix   = tostring(var.external_dns.txt_prefix)
         }
       }
     )
