@@ -39,7 +39,7 @@ resource "helm_release" "external_dns" {
           auth = {
             json = tostring(var.external_dns.service_account_key)
           }
-          folder_id    = tostring(var.external_dns.folder_id)
+          folder_id = tostring(var.external_dns.folder_id)
         }
       }
     )
