@@ -11,7 +11,7 @@ variable "vault" {
     name       = optional(string, "vault")
     repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/vault/chart")
     chart      = optional(string, "vault")
-    version    = optional(string, "0.28.1+yckms")
+    version    = optional(string, "0.29.0_yckms")
     namespace  = optional(string, "vault")
 
     service_account_key = optional(string)

@@ -11,7 +11,7 @@ variable "gateway_api" {
     name       = optional(string, "gateway-api")
     repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/gateway-api/gateway-api-helm")
     chart      = optional(string, "gateway-api")
-    version    = optional(string, "0.4.31")
+    version    = optional(string, "0.6.0")
     namespace  = optional(string, "gateway-api")
 
     folder_id           = optional(string)

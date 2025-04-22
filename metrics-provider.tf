@@ -11,7 +11,7 @@ variable "metrics_provider" {
     name       = optional(string, "metrics-provider")
     repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/metric-provider/chart")
     chart      = optional(string, "metrics-provider")
-    version    = optional(string, "0.1.12")
+    version    = optional(string, "0.1.13")
     namespace  = optional(string, "metrics-provider")
 
     metrics_folder_id             = optional(string)

@@ -11,7 +11,7 @@ variable "external_secrets" {
     name       = optional(string, "external-secrets")
     repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/external-secrets/chart")
     chart      = optional(string, "external-secrets")
-    version    = optional(string, "0.9.20")
+    version    = optional(string, "0.10.5")
     namespace  = optional(string, "external-secrets")
 
     service_account_key = optional(string)

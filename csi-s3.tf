@@ -11,7 +11,7 @@ variable "csi_s3" {
     name       = optional(string, "csi-s3")
     repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/csi-s3")
     chart      = optional(string, "csi-s3")
-    version    = optional(string, "0.35.5")
+    version    = optional(string, "0.42.1")
     namespace  = optional(string, "csi-s3")
 
     create_storage_class      = optional(bool, true)
@@ -20,6 +20,7 @@ variable "csi_s3" {
     object_storage_key_secret = optional(string)
     single_bucket             = optional(string)
     s3_endpoint               = optional(string, "https://storage.yandexcloud.net")
+    s3_region                 = optional(string, "ru-central1")
     mount_options             = optional(string, "--memory-limit 1000 --dir-mode 0777 --file-mode 0666")
     reclaim_policy            = optional(string, "Delete")
     storage_class_name        = optional(string, "csi-s3")
@@ -49,6 +50,7 @@ resource "helm_release" "csi_s3" {
           secretKey = tostring(var.csi_s3.object_storage_key_secret)
           create    = var.csi_s3.create_secret
           endpoint  = tostring(var.csi_s3.s3_endpoint)
+          region    = tostring(var.csi_s3.s3_region)
           name      = tostring(var.csi_s3.secret_name)
         }
         storageClass = {

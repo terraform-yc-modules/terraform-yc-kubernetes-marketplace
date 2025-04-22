@@ -11,7 +11,7 @@ variable "crossplane" {
     name       = optional(string, "crossplane")
     repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/crossplane")
     chart      = optional(string, "crossplane")
-    version    = optional(string, "1.15.0")
+    version    = optional(string, "1.18.2")
     namespace  = optional(string, "crossplane")
 
     service_account_key = optional(string)

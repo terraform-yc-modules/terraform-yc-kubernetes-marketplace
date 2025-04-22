@@ -11,7 +11,7 @@ variable "alb_ingress" {
     name       = optional(string, "alb-ingress")
     repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/yc-alb-ingress")
     chart      = optional(string, "yc-alb-ingress-controller-chart")
-    version    = optional(string, "v0.2.11")
+    version    = optional(string, "v0.2.23")
     namespace  = optional(string, "alb-ingress")
 
     folder_id            = optional(string, null)
