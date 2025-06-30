@@ -4,7 +4,7 @@ terraform {
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = ">= 2.9"
+      version = ">= 2.9, < 3.0"
     }
     yandex = {
       source  = "yandex-cloud/yandex"
