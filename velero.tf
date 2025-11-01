@@ -11,7 +11,7 @@ variable "velero" {
     name       = optional(string, "velero")
     repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/velero")
     chart      = optional(string, "velero")
-    version    = optional(string, "8.5.0-4")
+    version    = optional(string, "8.5.0-5")
     namespace  = optional(string, "velero")
 
     object_storage_bucket = optional(string)
