@@ -9,7 +9,7 @@ variable "velero" {
   description = "Map for overriding Velero Helm chart settings"
   type = object({
     name       = optional(string, "velero")
-    repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/velero")
+    repository = optional(string, "oci://cr.yandex/yc-marketplace/yandex-cloud/velero/chart/velero")
     chart      = optional(string, "velero")
     version    = optional(string, "8.5.0-5")
     namespace  = optional(string, "velero")
